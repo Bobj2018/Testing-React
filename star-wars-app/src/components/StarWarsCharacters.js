@@ -5,16 +5,17 @@ import { getData } from "../api";
 import "./star-wars-characters.css";
 
 export default function StarWarsCharacters() {
-  const [url, setUrl] = useState("https://swapi.co/api/people");
+  const [option, setOption] = useState("people")
+  const [url, setUrl] = useState(`https://swapi.co/api/${option}`);
   const [previous, setPrevious] = useState();
   const [next, setNext] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [characters, setCharacters] = useState([]);
+  
   useEffect(() => {
     setIsLoading(true);
     const getCharacters = async () => {
       const characters = await getData(url);
-      console.log(characters);
       setNext(characters.next);
       setPrevious(characters.previous);
       setCharacters(characters.results);
@@ -35,6 +36,17 @@ export default function StarWarsCharacters() {
 
   return (
     <div>
+      <select value={option} onChange={e => {
+        setOption(e.target.value)
+        setUrl(`https://swapi.co/api/${e.target.value}`)
+      }}>
+        <option value="people">People</option>
+        <option value="planets">Planets</option>
+        <option value="starships">Starships</option>
+        <option value="vehicles">Vehicles</
+        option>
+        <option value="species">Species</option>
+      </select>
       {isLoading ? (
         <Loader
           type="ThreeDots"
@@ -46,7 +58,7 @@ export default function StarWarsCharacters() {
       ) : (
         <>
           {characters.map(character => (
-            <div key={character.url}>{character.name}</div>
+            <div data-testid={option} key={character.url}>{character.name}</div>
           ))}
         </>
       )}
